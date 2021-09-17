@@ -43,7 +43,7 @@ def findGatewayIP():
     # return the gateway IP
 
 def ping(host, times):
-    # funtion to ping the inputed host by inputed times
+    # funtion to ping the inputed host by inputed times (only for pre-programed ping)
     param = '-n' if name == 'nt' else '-c'
     # if the system if windows, param set to -n
     # else param set tp -c
@@ -52,6 +52,20 @@ def ping(host, times):
     #create the command to ping
 
     return (subprocess.call(command) == 0)
+    # return the result of the ping
+    # if the ping success, True returned
+    # if the ping failed, False returned
+
+def custom_ping(host, times):
+    # funtion to ping the inputed host by inputed times
+    param = '-n' if name == 'nt' else '-c'
+    # if the system if windows, param set to -n
+    # else param set tp -c
+
+    command = ['ping', param, str(times), host]
+    #create the command to ping
+
+    return str(subprocess.call(command))
     # return the result of the ping
     # if the ping success, True returned
     # if the ping failed, False returned
@@ -71,7 +85,7 @@ def main():
         result = ping("127.0.0.1", 1)
         if (result == True):
             sys.stdout.write("\033[0;32m")
-            print("\nSelf-ping sucessed!\n")
+            print("\nSelf-ping succeeded!\n")
         else:
             sys.stdout.write("\033[0;31m")
             print("\nSelf-ping failed! Please contact your system administrator\n")
@@ -87,7 +101,7 @@ def main():
         # ping the gateway
         if (result == True):
             sys.stdout.write("\033[0;32m")
-            print("\nPing gateway sucessed!\n")
+            print("\nPing gateway succeeded!\n")
         else:
             sys.stdout.write("\033[0;31m")
             print("\nPing gateway failed! Please contact your system administrator\n")
@@ -103,7 +117,7 @@ def main():
         # ping '8.8.8.8'
         if (result == True):
             sys.stdout.write("\033[0;32m")
-            print("\nPing 8.8.8.8 sucessed!\n")
+            print("\nPing 8.8.8.8 succeeded!\n")
         else:
             sys.stdout.write("\033[0;31m")
             print("\nPing 8.8.8.8 failed! Please contact your system administrator\n")
@@ -119,7 +133,7 @@ def main():
         # ping the RIT DNS server
         if (result == True):
             sys.stdout.write("\033[0;32m")
-            print("\nPing RIT DNS server sucessed!\n")
+            print("\nPing RIT DNS server succeeded!\n")
         else:
             sys.stdout.write("\033[0;31m")
             print("\nPing RIT DNS server failed! Please contact your system administrator\n")
@@ -135,7 +149,7 @@ def main():
         # ping 'www.google.com'
         if (result == True):
             sys.stdout.write("\033[0;32m")
-            print("\nPing www.google.com sucessed!\n")
+            print("\nPing www.google.com succeeded!\n")
         else:
             sys.stdout.write("\033[0;31m")
             print("\nPing www.google.com failed! Please contact your system administrator\n")
@@ -147,6 +161,35 @@ def main():
             sent = False
             break
             # ask the user if wanna quit
+
+        command = input("Enter an ip or url you want to ping(Enter Q/q or blank to quit): ")
+        # ask user to enter a destination the user wants to ping, or quit
+        while command != "Q" and command != "q" and command != "Q/q" and command != "":
+            result = custom_ping(command, 1)
+            print(result)
+            if result == "0":
+                sys.stdout.write("\033[0;32m")
+                print("\nPing", command, "succeeded!\n")
+                # output of a successful ping
+            elif result == "512":
+                sys.stdout.write("\033[0;35m")
+                print("Name or service not known:", command)
+                # output if a unknown name or service is entered
+            else:
+                sys.stdout.write("\033[0;31m")
+                print("\nPing", command, "failed! The service is down\n")
+                # output if the service is down
+            sys.stdout.write("\033[1;34m")
+            command = input("\nAll tests have been passed sucessfully! Enter Q/q to quit, enter other to contiune the test: ")
+            # ask user to enter a destination the user wants to ping, or quit
+        
+        sys.stdout.write("\033[1;34m")
+        command = input("\nEnter Q/q to quit, enter other to restart the test: ")
+        if command == "Q" or command == "q" or command == "Q/q":
+            sent = False
+            break
+            # ask the user if wanna quit or restart the test
+
     sys.stdout.write("\u001b[37m")
 
 if __name__ == '__main__':
